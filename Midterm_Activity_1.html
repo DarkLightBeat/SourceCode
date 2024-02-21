@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Source Code</title>
+<style>
+  body {
+    background-color: black;
+    margin: 0;
+    padding: 20px; /* Add padding for better readability */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white; /* Adding white color for better readability */
+    font-family: Arial, sans-serif; /* Adding a font family for better readability */
+    font-size: 18px; /* Larger font size */
+    line-height: 1.6; /* Improved line height for readability */
+  }
+  pre {
+    white-space: pre-wrap; /* Preserve white spaces */
+    font-size: 16px; /* Adjusting code font size */
+    background-color: #333; /* Adding a dark background for code block */
+    padding: 20px; /* Adding padding for code block */
+    border-radius: 8px; /* Rounded corners for code block */
+    overflow-x: auto; /* Allow horizontal scrolling if needed */
+  }
+</style>
+</head>
+<body>
+  <div style="max-width: 800px;">
+    <h1>Midterm Activity 1</h1>
+    <pre><code>
+class Employee:
+    def __init__(self, name, gender, birthdate, position, rate, dayswork):
+        self.__name = name
+        self.__gender = gender
+        self.__birthdate = birthdate
+        self.__position = position
+        self.__rate = rate
+        self.__dayswork = dayswork
+
+    def get_name(self):
+        return self.__name
+
+    def get_gender(self):
+        return self.__gender
+
+    def get_birthdate(self):
+        return self.__birthdate
+
+    def get_position(self):
+        return self.__position
+
+    def get_rate(self):
+        return self.__rate
+
+    def get_dayswork(self):
+        return self.__dayswork
+
+    def set_name(self, name):
+        self.__name = name
+
+    def set_gender(self, gender):
+        if gender.upper() in ['M', 'F']:
+            self.__gender = gender
+        else:
+            print("Invalid gender. Please enter 'M' or 'F'.")
+
+    def set_birthdate(self, birthdate):
+        try:
+            day, month, year = map(int, birthdate.split('/'))
+            self.__birthdate = birthdate
+        except ValueError:
+            print("Invalid birthdate. Please enter in the format 'dd/mm/yyyy'.")
+
+    def set_position(self, position):
+        self.__position = position
+
+    def set_rate(self, rate):
+        self.__rate = rate
+
+    def set_dayswork(self, dayswork):
+        self.__dayswork = dayswork
+
+    def get_gross(self):
+        gross = self.__dayswork * self.__rate
+        return gross
+
+    def get_sss(self):
+        gross = self.get_gross()
+        if gross < 10000:
+            sss = 0
+        elif 10000 <= gross < 20000:
+            sss = 1000
+        else:
+            sss = 1500
+        return sss
+
+    def get_tax(self):
+        gross = self.get_gross()
+        if gross < 10000:
+            tax = 0
+        elif 10000 <= gross < 20000:
+            tax = 0.1 * (gross - 10000)
+        else:
+            tax = 0.25 * gross
+        return tax
+
+    def get_net_salary(self):
+        gross = self.get_gross()
+        sss = self.get_sss()
+        tax = self.get_tax()
+        net = gross - sss - tax
+        return net
+
+    def get_employee_details(self):
+        print()
+        print("Employee Details: ")
+        print()
+        print("Name:", self.get_name())
+        print("Gender:", self.get_gender())
+        print("Birth Date:", self.get_birthdate())
+        print("Position:", self.get_position())
+        print()
+        print("Salary Details: ")
+        print()
+        print("Gross Salary: P ", "{:,.2f}".format(self.get_gross()), sep='')
+        print("SSS: P ", "{:,.2f}".format(self.get_sss()), sep='')
+        print("Tax: P ", "{:,.2f}".format(self.get_tax()), sep='')
+        print("Net Salary: P ", "{:,.2f}".format(self.get_net_salary()), sep='')
+
+def main():
+    name = input("Enter Employee Name: ")
+    gender = input("Enter Gender (M/F): ")
+    birthdate = input("Enter Birth Date: ")
+    position = input("Enter Position: ")
+    rate = float(input("Enter Rate per day: "))
+    dayswork = int(input("Enter Days Work: "))
+
+    employee = Employee(name, gender, birthdate, position, rate, dayswork)
+    employee.get_employee_details()
+
+if __name__ == "__main__":
+    main()
+    </code></pre>
+  </div>
+</body>
+</html>

@@ -90,7 +90,7 @@ class Employee:
         gross = self.get_gross()
         if gross < 10000:
             sss = 0
-        elif 10000 <= gross < 20000:
+        elif 10000 <= gross <= 20000:
             sss = 1000
         else:
             sss = 1500
@@ -102,7 +102,9 @@ class Employee:
         if gross < 10000:
             tax = 0
         elif 10000 <= gross < 20000:
-            tax = 0.1 * (gross - 10000)
+            tax = 0.10 * gross
+        elif 20000 <= gross <= 30000:
+            tax = 0.20 * gross 
         else:
             tax = 0.25 * gross
         return tax

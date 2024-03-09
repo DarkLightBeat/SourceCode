@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Source Code</title>
+<style>
+  body {
+    background-color: black;
+    margin: 0;
+    padding: 20px; /* Add padding for better readability */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white; /* Adding white color for better readability */
+    font-family: Arial, sans-serif; /* Adding a font family for better readability */
+    font-size: 18px; /* Larger font size */
+    line-height: 1.6; /* Improved line height for readability */
+  }
+  pre {
+    white-space: pre-wrap; /* Preserve white spaces */
+    font-size: 16px; /* Adjusting code font size */
+    background-color: #333; /* Adding a dark background for code block */
+    padding: 20px; /* Adding padding for code block */
+    border-radius: 8px; /* Rounded corners for code block */
+    overflow-x: auto; /* Allow horizontal scrolling if needed */
+  }
+</style>
+</head>
+<body>
+  <div style="max-width: 800px;">
+    <h1>Midterm Activity 5</h1>
+    <pre><code>
+
+(1)
+import pandas as pd
+
+dataset = pd.read_csv('suicide.csv')
+
+dataset.iloc[:,[0,1,2,3,6]]
+
+
+(2)
+dataset.iloc[:,[0,1,2,3,4,6]][dataset.country.isin(['Philippines'])]
+
+
+(3)
+dataset.iloc[:, [0, 1, 2, 3, 4, 6]][(dataset['country'] == 'Philippines') & (dataset['year'] == 2011)]
+
+
+(4)
+x = dataset[(dataset.year == 2005)][['country', 'year', 'sex', 'age', 'suicides/100k pop']]
+x[x['suicides/100k pop'] == max(x['suicides/100k pop'])]
+
+
+(5)
+import numpy as np
+
+x = dataset.groupby(by='year')[['suicides_no', 'suicides/100k pop']].agg(sum)
+
+x.sort_values(by='suicides_no', ascending = [False])
+
+
+(6)
+import numpy as np
+
+x = dataset.groupby(by='sex')[['suicides_no', 'suicides/100k pop']].agg(sum)
+
+x.sort_values(by='suicides_no', ascending = [False])
+
+
+(7)
+import numpy as np
+
+x = dataset.groupby(by='age')[['suicides_no', 'suicides/100k pop']].agg(sum)
+
+x.sort_values(by='suicides_no', ascending = [False])
+
+
+(8)
+import numpy as np
+
+x = dataset.groupby(by=['country', 'year']) [['suicides_no']].agg(sum)
+
+x.sort_values(by='suicides_no', ascending = [False])
+
+
+(9)
+import numpy as np
+
+total = dataset.groupby(['sex', 'year', 'age']).agg({'suicides_no':'sum'})
+display(total)
+
+
+(10)
+total = dataset.groupby(['sex', 'year', 'age']).agg({'suicides_no':'sum'}).sort_values(by='suicides_no', ascending=False).iloc[0]
+
+print(total)
+
+    </code></pre>
+  </div>
+</body>
+</html>

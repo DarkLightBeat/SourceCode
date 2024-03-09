@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Source Code</title>
+<style>
+  body {
+    background-color: black;
+    margin: 0;
+    padding: 20px; /* Add padding for better readability */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white; /* Adding white color for better readability */
+    font-family: Arial, sans-serif; /* Adding a font family for better readability */
+    font-size: 18px; /* Larger font size */
+    line-height: 1.6; /* Improved line height for readability */
+  }
+  pre {
+    white-space: pre-wrap; /* Preserve white spaces */
+    font-size: 16px; /* Adjusting code font size */
+    background-color: #333; /* Adding a dark background for code block */
+    padding: 20px; /* Adding padding for code block */
+    border-radius: 8px; /* Rounded corners for code block */
+    overflow-x: auto; /* Allow horizontal scrolling if needed */
+  }
+</style>
+</head>
+<body>
+  <div style="max-width: 800px;">
+    <h1>Python Source Code</h1>
+    <pre><code>
+import csv
+import os
+from enum import Enum, auto
+
+class Position(Enum):
+    TEAM_CAPTAIN = auto()
+    MEMBER = auto()
+    TECHNICAL_OFFICER = auto()
+    F2F_VERIFIER = auto()
+    ONLINE_VERIFIER = auto()
+
+class Student:
+    def __init__(self, student_number, name, age, position):
+        # Initialize student attributes
+        self.student_number = student_number
+        self.name = name
+        self.age = age
+        self.position = position
+
+    def to_dict(self):
+        # Convert student object to a dictionary
+        return {'Student Number': self.student_number, 'Name': self.name, 'Age': self.age, 'Position': self.position.value if isinstance(self.position, Position) else self.position}
+
+class FileManager:
+    
+    def read(file_name):
+        # Read student records from a CSV file
+        students = []
+        if not os.path.exists(file_name) or not os.path.isfile(file_name):
+            print(f"File '{file_name}' not found. Creating a new file.")
+            # If file doesn't exist, create a new one
+            FileManager.write(file_name, students)
+            return students
+
+        with open(file_name, 'r') as csv_file:
+            reader = csv.DictReader(csv_file)
+            for row in reader:
+                # Convert position to Position enum
+                position = row['Position']
+                if position.isdigit():
+                    position = Position(int(position))
+                students.append(Student(row['Student Number'], row['Name'], int(row['Age']), position))
+        return students
+
+    def write(file_name, students):
+        # Write student records to a CSV file
+        with open(file_name, 'w', newline='') as file:
+            fieldnames = ['Student Number', 'Name', 'Age', 'Position']
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writeheader()
+            for student in students:
+                writer.writerow(student.to_dict())
+
+class UserInterface:
+    
+    def add_student(students):
+        # Add a new student to the list
+        name = input('\nEnter student name (Last Name, First Name, Middle Initial): ')
+        age = UserInterface.get_valid_integer_input('\nEnter student age: ')
+        student_number = input('\nEnter student number: ')
+        positions = UserInterface.get_positions_input()
+        students.append(Student(student_number, name, age, positions))
+        students.sort(key=lambda x: x.name.lower())  # Sort the list of students alphabetically by name
+        print("\nStudent Added")
+
+    def display_students(students):
+        # Display student details based on user input criteria
+        filter_criteria = input("\nEnter student number or name to filter (leave blank for all students): ").strip().lower()
+        for student in students:
+            if filter_criteria in [student.student_number.lower(), student.name.lower()]:
+                UserInterface.display_student_details(student)
+
+    def delete_student(students):
+        # Delete a student from the list based on student number
+        student_number = input('\nEnter student number to delete: ')
+        for i, student in enumerate(students):
+            if student.student_number == student_number:
+                del students[i]
+                print('\nStudent deleted.')
+                return
+        print('\nStudent not found.')
+
+    def display_student_details(student):
+        # Display details of a single student
+        position = student.position
+        if isinstance(position, list):
+            positions = ', '.join(pos.name for pos in position)
+            print(f'\nStudent Number: {student.student_number} \nName: {student.name} \nAge: {student.age} \nPosition: {positions}')
+        else:
+            print(f'\nStudent Number: {student.student_number} \nName: {student.name} \nAge: {student.age} \nPosition: {position.name}')
+
+    def get_valid_integer_input(prompt):
+        # Get valid integer input from the user
+        while True:
+            try:
+                value = int(input(prompt))
+                if value < 0:
+                    raise ValueError("Age must be a positive integer.")
+                return value
+            except ValueError:
+                print("Invalid input. Please enter a valid integer.")
+
+    def get_positions_input():
+        # Get positions input from the user
+        positions = []
+        while True:
+            print("\nEnter student positions (press Enter when done):")
+            print("[1] Team Captain")
+            print("[2] Member")
+            print("[3] Technical Officer")
+            print("[4] F2F Verifier")
+            print("[5] Online Verifier")
+            print("[6] Custom")
+            choice = input("\nEnter position number or 'Custom' for custom position, or press Enter to finish: ").strip()
+            if choice == "":
+                break
+            elif choice.isdigit() and 1 <= int(choice) <= 5:
+                position = Position(int(choice))
+                positions.append(position)
+            elif choice.lower() == "custom":
+                custom_position = input("\nEnter custom position: ")
+                positions.append(custom_position)  # This line should be appending `Position.CUSTOM` instead
+            else:
+                print("Invalid input. Please enter a valid position number or 'Custom'.")
+        return positions
+
+class Option:
+    
+    def main():
+        # Main function to execute the program
+        os.system('cls')  # Clear the screen
+        file_name = 'Student_Record.csv'
+        students = FileManager.read(file_name)
+
+        while True:
+            print('\nOptions:')
+            print('[1] Add student')
+            print('[2] Display students')
+            print('[3] Delete student by student number')
+            print('[4] Count positions')
+            print('[5] Quit')
+            
+            option = UserInterface.get_valid_integer_input('\nChoose an option: ')
+            os.system('cls') # Clear the screen after the user chooses an option
+
+            if option == 1:
+                UserInterface.add_student(students)
+                FileManager.write(file_name, students)
+            elif option == 2:
+                UserInterface.display_students(students)
+            elif option == 3:
+                UserInterface.delete_student(students)
+                FileManager.write(file_name, students)
+            elif option == 4:
+                Option.count_positions(students)
+            elif option == 5:
+                break
+
+    def count_positions(students):
+        # Count the number of students holding each position
+        position_counts = {Position.TEAM_CAPTAIN: 0, Position.MEMBER: 0, Position.TECHNICAL_OFFICER: 0, Position.F2F_VERIFIER: 0, Position.ONLINE_VERIFIER: 0}
+        for student in students:
+            position = student.position
+            if isinstance(position, list):
+                for pos in position:
+                    position_counts[pos] += 1
+            else:
+                position_counts[position] += 1
+            
+        print("\nPosition Counts:")
+        for position, count in position_counts.items():
+            print(f"{position.name}: {count}")
+
+if __name__ == '__main__':
+    Option.main()
+    </code></pre>
+  </div>
+</body>
+</html>

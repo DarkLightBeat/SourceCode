@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Source Code</title>
+<style>
+  body {
+    background-color: black;
+    margin: 0;
+    padding: 20px; /* Add padding for better readability */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white; /* Adding white color for better readability */
+    font-family: Arial, sans-serif; /* Adding a font family for better readability */
+    font-size: 18px; /* Larger font size */
+    line-height: 1.6; /* Improved line height for readability */
+  }
+  pre {
+    white-space: pre-wrap; /* Preserve white spaces */
+    font-size: 16px; /* Adjusting code font size */
+    background-color: #333; /* Adding a dark background for code block */
+    padding: 20px; /* Adding padding for code block */
+    border-radius: 8px; /* Rounded corners for code block */
+    overflow-x: auto; /* Allow horizontal scrolling if needed */
+  }
+</style>
+</head>
+<body>
+  <div style="max-width: 800px;">
+    <h1>Prelim - Activity 2</h1>
+    <pre><code>
+
+import csv  # Importing the CSV module
+
+# Opening the 'census.csv' file in read mode and creating a CSV DictReader object
+with open('census.csv', 'r') as file:
+    reader = csv.DictReader(file)
+
+    # Initializing dictionaries to store state-wise city counts, maximum population cities, and minimum population cities
+    state_cities = {}
+    city_max_pop = {}
+    city_min_pop = {}
+
+    # Initializing a variable to store the total population
+    total_population = 0
+
+    # Iterating through each row in the CSV file
+    for row in reader:
+        state, city, pop = row['STNAME'], row['CTYNAME'], int(row['CENSUS2010POP'])
+
+        # Skipping rows where state and city names are the same
+        if state == city:
+            continue
+
+        # Counting the number of cities per state
+        state_cities[state] = state_cities.get(state, 0) + 1
+
+        # Adding population to the total population count
+        total_population += pop
+
+        # Finding the city with the maximum population for each state
+        if state not in city_max_pop or pop > city_max_pop[state][1]:
+            city_max_pop[state] = (city, pop)
+
+        # Finding the city with the minimum population for each state
+        if state not in city_min_pop or pop < city_min_pop[state][1]:
+            city_min_pop[state] = (city, pop)
+
+# Writing the results to a new CSV file named 'US2010Census.csv'
+with open('US2010Census.csv', 'w', newline='') as result_file:
+    writer = csv.writer(result_file)
+
+    # Writing the header row for the new CSV file
+    writer.writerow(['State', 'Total Cities', 'Total 2010 Population', 'City with Lowest 2010 Population', 'City with Highest 2010 Population'])
+
+    # Writing data for each state to the new CSV file
+    for state in state_cities:
+        writer.writerow([state, state_cities[state], total_population, city_min_pop[state][0], city_max_pop[state][0]])
+
+# Printing a message indicating that the results have been saved to 'US2010Census.csv'
+print('Results saved to US2010Census.csv')
+    </code></pre>
+  </div>
+</body>
+</html>

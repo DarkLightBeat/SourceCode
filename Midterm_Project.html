@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Source Code</title>
+<style>
+  body {
+    background-color: black;
+    margin: 0;
+    padding: 20px; /* Add padding for better readability */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white; /* Adding white color for better readability */
+    font-family: Arial, sans-serif; /* Adding a font family for better readability */
+    font-size: 18px; /* Larger font size */
+    line-height: 1.6; /* Improved line height for readability */
+  }
+  pre {
+    white-space: pre-wrap; /* Preserve white spaces */
+    font-size: 16px; /* Adjusting code font size */
+    background-color: #333; /* Adding a dark background for code block */
+    padding: 20px; /* Adding padding for code block */
+    border-radius: 8px; /* Rounded corners for code block */
+    overflow-x: auto; /* Allow horizontal scrolling if needed */
+  }
+</style>
+</head>
+<body>
+  <div style="max-width: 800px;">
+    <h1>Midterm Project</h1>
+    <pre><code>
+
+import pandas as pd
+import hvplot.pandas
+import numpy as np
+import holoviews as hv
+import scipy.stats as stats
+
+read_file = pd.read_csv('worldometer_data.csv')
+read_file.head()
+
+read_file.hvplot.table()
+
+population_1 = read_file.groupby("continent")["population"].sum().reset_index()
+# Format the sum of population with a comma as a thousand separator
+population_1['population'] = population_1['population'].apply(lambda x: format(x, ','))
+population_1           
+
+population_2 = read_file.groupby("country")["population"].sum().reset_index()
+# Format the sum of population with a comma as a thousand separator
+population_2['population'] = population_2['population'].apply(lambda x: format(x, ','))
+population_2  
+
+test_1 = read_file.groupby("continent")["total_tests"].sum().reset_index()
+# Convert the sum of total_tests to integers to remove the decimal
+test_1['total_tests'] = test_1['total_tests'].apply(int) 
+# Format the sum of total_tests with a comma as a thousand separator
+test_1['total_tests'] = test_1['total_tests'].apply(lambda x: format(x, ','))
+test_1
+
+test_2 = read_file.groupby("country")["total_tests"].sum().reset_index()
+# Convert the sum of total_tests to integers to remove the decimal
+test_2['total_tests'] = test_2['total_tests'].apply(int) 
+# Format the sum of total_tests with a comma as a thousand separator
+test_2['total_tests'] = test_2['total_tests'].apply(lambda x: format(x, ','))
+test_2
+
+continent_1 = read_file[["continent","total_confirmed"]].groupby("continent").sum().reset_index()
+# Format the sum of total_confirmed with a comma as a thousand separator
+continent_1['total_confirmed'] = continent_1['total_confirmed'].apply(lambda x: format(x, ','))
+# Sort the dataframe by total_confirmed in descending order
+continent_1 = continent_1.sort_values(by='total_confirmed', ascending=False)
+continent_1    
+
+continent_2 = read_file.groupby("continent")["total_deaths"].sum().reset_index()
+# Convert the sum of total_deaths to integers to remove the decimal
+continent_2['total_deaths'] = continent_2['total_deaths'].apply(int) 
+# Format the sum of total_deaths with a comma as a thousand separator
+continent_2['total_deaths'] = continent_2['total_deaths'].apply(lambda x: format(x, ','))
+continent_2     
+
+continent_3 = read_file.groupby("continent")["total_recovered"].sum().reset_index()
+# Convert the sum of total_recovered to integers to remove the decimal
+continent_3['total_recovered'] = continent_3['total_recovered'].apply(int) 
+# Format the sum of total_recovered with a comma as a thousand separator
+continent_3['total_recovered'] = continent_3['total_recovered'].apply(lambda x: format(x, ','))
+continent_3
+
+continent_4 = read_file.groupby("continent")["active_cases"].sum().reset_index()
+# Convert the sum of active_cases to integers to remove the decimal
+continent_4['active_cases'] = continent_4['active_cases'].apply(int) 
+# Format the sum of active_cases with a comma as a thousand separator
+continent_4['active_cases'] = continent_4['active_cases'].apply(lambda x: format(x, ','))
+# Sort the dataframe by active_cases in descending order
+continent_4 = continent_4.sort_values(by='active_cases', ascending=False)
+continent_4
+
+continent_5 = read_file.groupby("continent")["total_cases_per_1m_population"].sum().reset_index()
+# Convert the sum of total_cases_per_1m_population to integers to remove the decimal
+continent_5['total_cases_per_1m_population'] = continent_5['total_cases_per_1m_population'].apply(int) 
+# Format the sum of total_cases_per_1m_population with a comma as a thousand separator
+continent_5['total_cases_per_1m_population'] = continent_5['total_cases_per_1m_population'].apply(lambda x: format(x, ','))
+continent_5
+
+continent_6 = read_file.groupby("continent")["total_deaths_per_1m_population"].sum().reset_index()
+# Convert the sum of total_deaths_per_1m_population to integers to remove the decimal
+continent_6['total_deaths_per_1m_population'] = continent_6['total_deaths_per_1m_population'].apply(int) 
+# Format the sum of total_deaths_per_1m_population with a comma as a thousand separator
+continent_6['total_deaths_per_1m_population'] = continent_6['total_deaths_per_1m_population'].apply(lambda x: format(x, ','))
+continent_6
+
+country_1 = read_file.groupby("country")["total_confirmed"].sum().reset_index()
+# Format the sum of total_confirmed with a comma as a thousand separator
+country_1['total_confirmed'] = country_1['total_confirmed'].apply(lambda x: format(x, ','))
+# Sort the dataframe by total_confirmed in descending order
+country_1 = country_1.sort_values(by='total_confirmed', ascending=False)
+country_1
+
+country_2 = read_file.groupby("country")["total_deaths"].sum().reset_index()
+# Convert the sum of total deaths to integers to remove the decimal
+country_2['total_deaths'] = country_2['total_deaths'].apply(int) 
+# Format the sum of total deaths with a comma as a thousand separator
+country_2['total_deaths'] = country_2['total_deaths'].apply(lambda x: format(x, ','))
+country_2
+
+
+country_3 = read_file.groupby("country")["total_recovered"].sum().reset_index()
+# Convert the sum of total_recovered to integers to remove the decimal
+country_3['total_recovered'] = country_3['total_recovered'].apply(int) 
+# Format the sum of total_recovered with a comma as a thousand separator
+country_3['total_recovered'] = country_3['total_recovered'].apply(lambda x: format(x, ','))
+country_3
+
+country_4 = read_file.groupby("country")["active_cases"].sum().reset_index()
+# Convert the sum of active_cases to integers to remove the decimal
+country_4['active_cases'] = country_4['active_cases'].apply(int) 
+# Format the sum of active_cases with a comma as a thousand separator
+country_4['active_cases'] = country_4['active_cases'].apply(lambda x: format(x, ','))
+country_4
+
+country_5 = read_file.groupby("country")["total_cases_per_1m_population"].sum().reset_index()
+# Convert the sum of total_cases_per_1m_population to integers to remove the decimal
+country_5['total_cases_per_1m_population'] = country_5['total_cases_per_1m_population'].apply(int) 
+# Format the sum of total_cases_per_1m_population with a comma as a thousand separator
+country_5['total_cases_per_1m_population'] = country_5['total_cases_per_1m_population'].apply(lambda x: format(x, ','))
+country_5
+
+country_6 = read_file.groupby("country")["total_deaths_per_1m_population"].sum().reset_index()
+# Convert the sum of total_deaths_per_1m_population to integers to remove the decimal
+country_6['total_deaths_per_1m_population'] = country_6['total_deaths_per_1m_population'].apply(int) 
+# Format the sum of total_deaths_per_1m_population with a comma as a thousand separator
+country_6['total_deaths_per_1m_population'] = country_6['total_deaths_per_1m_population'].apply(lambda x: format(x, ','))
+country_6
+
+    </code></pre>
+  </div>
+</body>
+</html>

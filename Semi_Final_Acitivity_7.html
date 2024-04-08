@@ -143,6 +143,7 @@ SELECT Department AS "Department", Course AS "Course", Year_Level AS "Year Level
 SELECT Department AS "Department", Course AS "Course", Year_Level AS "Year Level", Total_Units AS "Total Units" FROM Courses ORDER BY Total_Units asc;
 SELECT Department as "Department", Course AS "Course", FORMAT(Tuition, 0) AS "Tuition" FROM Tuition ORDER BY Tuition desc;
 SELECT ID as "ID Number", Department AS "Department", FirstName as "First Name",  LastName as "Last Name", Age as "Age"  FROM Persons ORDER BY LastName asc;
+SELECT Course, Department, Year_Level, Total_Units FROM Courses ORDER BY Department ASC, Year_Level DESC;
 
 SELECT P.ID AS "ID Number", P.FirstName AS "First Name", P.LastName AS "Last Name", P.Age,
        C.Course AS "Course", C.Year_Level AS "Year Level", C.Total_Units AS "Total Units" ,

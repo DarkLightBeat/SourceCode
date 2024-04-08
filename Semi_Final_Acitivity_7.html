@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Source Code</title>
+<style>
+  body {
+    background-color: black;
+    margin: 0;
+    padding: 20px; /* Add padding for better readability */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white; /* Adding white color for better readability */
+    font-family: Arial, sans-serif; /* Adding a font family for better readability */
+    font-size: 18px; /* Larger font size */
+    line-height: 1.6; /* Improved line height for readability */
+  }
+  pre {
+    white-space: pre-wrap; /* Preserve white spaces */
+    font-size: 16px; /* Adjusting code font size */
+    background-color: #333; /* Adding a dark background for code block */
+    padding: 20px; /* Adding padding for code block */
+    border-radius: 8px; /* Rounded corners for code block */
+    overflow-x: auto; /* Allow horizontal scrolling if needed */
+  }
+</style>
+</head>
+<body>
+  <div style="max-width: 800px;">
+    <h1>Midterm Activity 7</h1>
+    <pre><code>
+CREATE DATABASE Tuition;
+
+USE Tuition;
+
+CREATE TABLE Tuition (
+    Department varchar(300) NOT NULL,
+    Course varchar(300) NOT NULL,
+    Tuition float,
+    PRIMARY KEY (Department)
+);    
+    
+CREATE TABLE Courses (
+    Course_ID int NOT NULL AUTO_INCREMENT,
+    Department varchar(300) NOT NULL,
+    Course varchar(300) NOT NULL,
+    Year_Level varchar(300) NOT NULL,
+    Total_Units varchar(300) NOT NULL,
+    PRIMARY KEY (Course_ID),
+    FOREIGN KEY (Department) REFERENCES Tuition(Department)
+);
+
+CREATE TABLE Persons (
+    ID int NOT NULL AUTO_INCREMENT,
+    Department varchar(300) NOT NULL,
+    LastName varchar(300) NOT NULL,
+    FirstName varchar(300),
+    Age int,
+    PRIMARY KEY (ID),
+    FOREIGN KEY (Department) REFERENCES Tuition(Department)
+);
+
+-- Insert record
+
+INSERT INTO Tuition VALUES ("College of Arts and Sciences", "Communication", 35064.00),
+("College of Computing and Multimedia Studies", "Computer Science", 32748.00),
+("College of International Hospitality & Tourism Management", "Tourism Management", 30561.00),
+("College of Engineering", "Civil Engineering", 40227.00),
+("College of Architecture and Fine Arts", "Fine Arts", 43111.00);
+
+INSERT INTO Courses (Department, Course, Year_Level, Total_Units) VALUES ("College of Arts and Sciences", "Communication", 1, 22),
+("College of Computing and Multimedia Studies", "Computer Science", 1, 22),
+("College of International Hospitality & Tourism Management", "Tourism Management", 1, 28),
+("College of Engineering", "Civil Engineering", 1, 29),
+("College of Architecture and Fine Arts", "Fine Arts", 1, 28);
+
+INSERT INTO Persons(ID, Department, LastName, FirstName, Age) VALUES (35574, "College of Computing and Multimedia Studies", "Villabroza", "Kenneth", 19),
+(35498, "College of Computing and Multimedia Studies", "Gumarao", "Aerron Xander", 18),
+(35589, "College of Computing and Multimedia Studies", "Martirez", "John Paul", 19),
+(34567, "College of Computing and Multimedia Studies", "Cabalsa", "Jeferson", 19),
+(45674, "College of Computing and Multimedia Studies", "Ytac", "John Ericsson", 19);
+
+-- Edit record in Persons
+UPDATE Persons
+SET ID = 35690
+WHERE LastName = "Gumarao";
+
+UPDATE Persons
+SET ID = 35489
+WHERE LastName = "Martirez";
+
+UPDATE Persons
+SET ID = 35708
+WHERE LastName = "Cabalsa";
+
+UPDATE Persons
+SET ID = 36656
+WHERE LastName = "Ytac";
+
+-- Edit record in Courses
+
+UPDATE Courses
+SET Total_Units = 44
+WHERE Department = "College of Arts and Sciences";
+
+UPDATE Courses
+SET Total_Units = 44
+WHERE Department = "College of Computing and Multimedia Studies";
+
+UPDATE Courses
+SET Total_Units = 56
+WHERE Department = "College of International Hospitality & Tourism Management";
+
+UPDATE Courses
+SET Total_Units = 59
+WHERE Department = "College of Engineering";
+
+UPDATE Courses
+SET Total_Units = 53
+WHERE Department = "College of Architecture and Fine Arts";
+
+-- Delete record
+DELETE FROM Persons WHERE ID = 35574; 
+
+-- Query record
+SELECT Department as "Department", Course AS "Course", FORMAT(Tuition, 0) AS "Tuition" FROM Tuition;
+SELECT Course_ID AS "Course ID", Department AS "Department", Course AS "Course", Year_Level AS "Year Level", Total_Units AS "Total Units" FROM Courses;
+SELECT ID as "ID Number", Department AS "Department", FirstName as "First Name",  LastName as "Last Name", Age as "Age"  FROM Persons;
+
+SELECT Department as "Department", FORMAT(Tuition, 0) AS "Tuition" FROM Tuition;
+SELECT Department AS "Department", Year_Level AS "Year Level", Total_Units AS "Total Units" FROM Courses;
+SELECT ID as "ID Number", FirstName as "First Name",  LastName as "Last Name", Age as "Age"  FROM Persons;
+
+SELECT ID as "ID Number", Department AS "Department", FirstName as "First Name",  LastName as "Last Name", Age as "Age"  FROM Persons WHERE FirstName like "John%";
+SELECT Department as "Department", Course AS "Course", FORMAT(Tuition, 0) AS "Tuition" FROM Tuition WHERE Tuition <= 40000;
+SELECT ID AS "ID Number", FirstName AS "First Name", LastName AS "Last Name", Age FROM Persons WHERE Department IN (SELECT Department FROM Courses WHERE Total_Units > 25);
+SELECT Course AS "Course", Year_Level AS "Year Level", Total_Units AS "Total Units" FROM Courses WHERE Department = 'College of Arts and Sciences';
+SELECT ID AS "ID Number", FirstName AS "First Name", LastName AS "Last Name", Age FROM Persons WHERE Department IN (SELECT Department FROM Courses WHERE Course LIKE '%Computer%');
+
+SELECT Department AS "Department", Course AS "Course", Year_Level AS "Year Level", Total_Units AS "Total Units" FROM Courses ORDER BY Department asc;
+SELECT Department AS "Department", Course AS "Course", Year_Level AS "Year Level", Total_Units AS "Total Units" FROM Courses ORDER BY Total_Units asc;
+SELECT Department as "Department", Course AS "Course", FORMAT(Tuition, 0) AS "Tuition" FROM Tuition ORDER BY Tuition desc;
+SELECT ID as "ID Number", Department AS "Department", FirstName as "First Name",  LastName as "Last Name", Age as "Age"  FROM Persons ORDER BY LastName asc;
+
+SELECT P.ID AS "ID Number", P.FirstName AS "First Name", P.LastName AS "Last Name", P.Age,
+       C.Course AS "Course", C.Year_Level AS "Year Level", C.Total_Units AS "Total Units" ,
+		FORMAT(T.Tuition, 0) AS "Tuition"
+FROM Persons P
+INNER JOIN Courses C ON P.Department = C.Department
+INNER JOIN Tuition T ON P.Department = T.Department;
+
+    </code></pre>
+  </div>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Source Code</title>
+<style>
+  body {
+    background-color: black;
+    margin: 0;
+    padding: 20px; /* Add padding for better readability */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white; /* Adding white color for better readability */
+    font-family: Arial, sans-serif; /* Adding a font family for better readability */
+    font-size: 18px; /* Larger font size */
+    line-height: 1.6; /* Improved line height for readability */
+  }
+  pre {
+    white-space: pre-wrap; /* Preserve white spaces */
+    font-size: 16px; /* Adjusting code font size */
+    background-color: #333; /* Adding a dark background for code block */
+    padding: 20px; /* Adding padding for code block */
+    border-radius: 8px; /* Rounded corners for code block */
+    overflow-x: auto; /* Allow horizontal scrolling if needed */
+  }
+</style>
+</head>
+<body>
+  <div style="max-width: 800px;">
+    <h1>Semi-Final Project (Villabroza)</h1>
+    <pre><code>
+import os
+import mysql.connector
+from mysql.connector import errorcode
+
+class TaskManager:
+    def __init__(self):
+        self.connection = None
+
+    def connect(self):
+        try:
+            self.connection = mysql.connector.connect(user='root', password='M.1a9k8o0y', host='localhost', database='Tasks')
+            print('Connection successful\n')
+        except mysql.connector.Error as err:
+            if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+                print("The provided user name or password is incorrect.")
+            elif err.errno == errorcode.ER_BAD_DB_ERROR:
+                print("The specified database does not exist.")
+            else:
+                print(err)
+
+    def add_task(self):
+        cursor = self.connection.cursor()
+        title = input("Enter a task title: ")
+        description = input("Enter a task description: ")
+        username = input("Enter the username: ")
+        password = input("Enter the password: ")
+
+        # Check if the user already exists
+        query = "SELECT id FROM users WHERE username = %s"
+        data = (username,)
+        cursor.execute(query, data)
+        existing_user = cursor.fetchone()
+        if not existing_user:
+            # Insert a new user into the users table
+            query = "INSERT INTO users (username, password) VALUES (%s, %s)"
+            data = (username, password)
+            cursor.execute(query, data)
+            self.connection.commit()
+
+            # Get the id of the newly created user
+            user_id = cursor.lastrowid
+        else:
+            user_id = existing_user[0]
+
+        # Insert a new task into the tasks table
+        query = "INSERT INTO tasks (title, description, completed, user_id) VALUES (%s, %s, %s, %s)"
+        data = (title, description, 0, user_id)
+        cursor.execute(query, data)
+        self.connection.commit()
+
+        print()
+        print(f"Task {title} added successfully")
+        cursor.close()
+
+    def view_users(self):
+        cursor = self.connection.cursor()
+        query = "SELECT * FROM users"
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        for row in rows:
+            print(row)
+        cursor.close()
+
+    def view_tasks(self):
+        cursor = self.connection.cursor()
+        query = "SELECT tasks.id, tasks.title, tasks.completed, users.username FROM tasks JOIN users ON tasks.user_id = users.id"
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        for row in rows:
+            print(row)
+        cursor.close()
+
+    def mark_complete(self, task_id):
+        cursor = self.connection.cursor()
+        query = "UPDATE tasks SET completed = 1 WHERE id = %s"
+        data = (task_id,)
+        cursor.execute(query, data)
+        self.connection.commit()
+        print(f"Task {task_id} marked complete")
+        cursor.close()
+
+    def delete_task(self, task_id):
+        cursor = self.connection.cursor()
+        query = "SELECT * FROM tasks WHERE id = %s"
+        data = (task_id,)
+        cursor.execute(query, data)
+        task = cursor.fetchone()
+        if not task:
+            print(f"Task {task_id} not found")
+            return
+        query = "DELETE FROM tasks WHERE id = %s"
+        data = (task_id,)
+        cursor.execute(query, data)
+        self.connection.commit()
+        print(f"Task {task_id} deleted successfully")
+        cursor.close()
+
+    def main(self):
+        while True:
+            os.system('cls')  # Use os.system('clear') on Unix/Linux
+            print("[1] Add Task")
+            print("[2] View Tasks")
+            print("[3] View Users")
+            print("[4] Mark Complete")
+            print("[5] Delete Completed Task")
+            print("[6] Quit")
+            print()
+            choice = input("Enter your choice: ")
+            os.system('cls')
+
+            self.connect()
+
+            if choice == "1":
+                self.add_task()
+            elif choice == "2":
+                self.view_tasks()
+            elif choice == "3":
+                self.view_users()
+            elif choice == "4":
+                task_id = int(input("Enter the task ID to mark complete: "))
+                self.mark_complete(task_id)
+            elif choice == "5":
+                task_id = int(input("Enter the task ID to delete: "))
+                self.delete_task(task_id)
+            elif choice == "6":
+                break
+
+            print()
+            x = input("Return to main menu [y/n]? ")
+            if x == 'y':
+                continue
+
+            self.connection.close()
+            exit(0)
+
+if __name__ == "__main__":
+    task_manager = TaskManager()
+    task_manager.main()
+
+          </code></pre>
+  </div>
+</body>
+</html>

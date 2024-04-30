@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Source Code</title>
+<style>
+  body {
+    background-color: black;
+    margin: 0;
+    padding: 20px; /* Add padding for better readability */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white; /* Adding white color for better readability */
+    font-family: Arial, sans-serif; /* Adding a font family for better readability */
+    font-size: 18px; /* Larger font size */
+    line-height: 1.6; /* Improved line height for readability */
+  }
+  pre {
+    white-space: pre-wrap; /* Preserve white spaces */
+    font-size: 16px; /* Adjusting code font size */
+    background-color: #333; /* Adding a dark background for code block */
+    padding: 20px; /* Adding padding for code block */
+    border-radius: 8px; /* Rounded corners for code block */
+    overflow-x: auto; /* Allow horizontal scrolling if needed */
+  }
+</style>
+</head>
+<body>
+  <div style="max-width: 800px;">
+    <h1>Midterm Activity 4</h1>
+    <pre><code>
+import sys
+from PyQt6.QtWidgets import (
+    QApplication,
+    QDialog,
+    QFormLayout,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QComboBox,
+    QCheckBox
+)
+
+
+class StudentCourseDialog(QDialog):
+    def __init__(self):
+        super().__init__()
+
+        # Set window title
+        self.setWindowTitle("Student Course Information")
+
+        # Create layout
+        self.layout = QFormLayout()
+        self.setLayout(self.layout)
+
+        # Add widgets
+        self.student_id_label = QLabel("Student ID:")
+        self.student_id_edit = QLineEdit()
+        self.course_name_label = QLabel("Course Name:")
+        self.course_name_edit = QLineEdit()
+        self.instructor_label = QLabel("Instructor:")
+        self.instructor_edit = QLineEdit()
+        self.credits_label = QLabel("Credits:")
+        self.credits_edit = QLineEdit()
+
+        # Semester Combobox
+        self.semester_label = QLabel("Semester:")
+        self.semester_combo = QComboBox()
+        self.semester_combo.addItems(["Fall", "Spring", "Summer"])
+
+        # Attending Checkbox
+        self.attending_label = QLabel("Currently Attending:")
+        self.attending_checkbox = QCheckBox()
+
+         # Submit button
+        self.submit_button = QPushButton("Submit")
+
+        self.layout.addRow(self.student_id_label, self.student_id_edit)
+        self.layout.addRow(self.course_name_label, self.course_name_edit)
+        self.layout.addRow(self.instructor_label, self.instructor_edit)
+        self.layout.addRow(self.credits_label, self.credits_edit)
+        self.layout.addRow(self.semester_label, self.semester_combo)
+        self.layout.addRow(self.attending_label, self.attending_checkbox)
+        self.layout.addRow(self.submit_button)
+
+
+
+
+if __name__ == "__main__":
+    app = QApplication([])
+    dialog = StudentCourseDialog()
+    dialog.show()
+    sys.exit(app.exec())
+    </code></pre>
+  </div>
+</body>
+</html>

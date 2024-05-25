@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Source Code</title>
+<style>
+  body {
+    background-color: black;
+    margin: 0;
+    padding: 20px; /* Add padding for better readability */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white; /* Adding white color for better readability */
+    font-family: Arial, sans-serif; /* Adding a font family for better readability */
+    font-size: 18px; /* Larger font size */
+    line-height: 1.6; /* Improved line height for readability */
+  }
+  pre {
+    white-space: pre-wrap; /* Preserve white spaces */
+    font-size: 16px; /* Adjusting code font size */
+    background-color: #333; /* Adding a dark background for code block */
+    padding: 20px; /* Adding padding for code block */
+    border-radius: 8px; /* Rounded corners for code block */
+    overflow-x: auto; /* Allow horizontal scrolling if needed */
+  }
+</style>
+</head>
+<body>
+  <div style="max-width: 800px;">
+    <h1>Final Project</h1>
+    <pre><code>
+from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QPushButton, QLabel, QTableWidget, QTableWidgetItem, QInputDialog, QTabWidget, QMessageBox
+from PyQt6.QtWidgets import QSplitter
+from PyQt6.QtCore import Qt
+
+class RestaurantApp(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Restaurant Billing System")
+        self.setGeometry(100, 100, 800, 600)
+
+        self.central_widget = QWidget()
+        self.setCentralWidget(self.central_widget)
+        self.layout = QVBoxLayout(self.central_widget)
+
+        self.menu_button = QPushButton("Menu")
+        self.layout.addWidget(self.menu_button)
+        self.menu_button.clicked.connect(self.show_menu_form)
+
+        self.customer_button = QPushButton("Customers")
+        self.layout.addWidget(self.customer_button)
+        self.customer_button.clicked.connect(self.show_customer_form)
+
+        self.order_button = QPushButton("Orders")
+        self.layout.addWidget(self.order_button)
+        self.order_button.clicked.connect(self.show_order_form)
+
+        self.employee_button = QPushButton("Employees")
+        self.layout.addWidget(self.employee_button)
+        self.employee_button.clicked.connect(self.show_employee_form)
+
+        self.employee_tab = QWidget()
+        self.employee_form = EmployeeForm()
+        self.employee_tab.layout().addWidget(self.employee_form)
+        self.tabs.addTab(self.employee_tab, "Employee Form")
+
+        self.menu_items = []
+        self.customers = []
+        self.orders = []
+        self.employees = []
+
+    def show_menu_form(self):
+        self.menu_form = MenuForm(self.menu_items)
+        self.menu_form.show()
+
+    def show_customer_form(self):
+        self.customer_form = CustomerForm(self.customers)
+        self.customer_form.show()
+
+    def show_order_form(self):
+        self.order_form = OrderForm(self.orders)
+        self.order_form.show()
+
+    def show_employee_form(self):
+        self.employee_form = EmployeeForm(self.employees)
+        self.employee_form.show()
+
+class MenuForm(QWidget):
+    def __init__(self, menu_items):
+        super().__init__()
+        self.setWindowTitle("Menu Form")
+        self.setGeometry(100, 100, 400, 300)
+
+        self.menu_items = menu_items
+
+        self.layout = QVBoxLayout(self)
+
+        self.menu_label = QLabel("Menu Items:")
+        self.layout.addWidget(self.menu_label)
+
+        self.menu_table = QTableWidget()
+        self.menu_table.setColumnCount(2)
+        self.menu_table.setHorizontalHeaderLabels(["Item", "Price"])
+        self.layout.addWidget(self.menu_table)
+
+        self.add_button = QPushButton("Add Item")
+        self.layout.addWidget(self.add_button)
+        self.add_button.clicked.connect(self.add_item)
+
+        self.update_button = QPushButton("Update Item")
+        self.layout.addWidget(self.update_button)
+        self.update_button.clicked.connect(self.update_item)
+
+        self.delete_button = QPushButton("Delete Item")
+        self.layout.addWidget(self.delete_button)
+        self.delete_button.clicked.connect(self.delete_item)
+
+        self.load_menu_items()
+
+    def add_item(self):
+        item_name, ok = QInputDialog.getText(self, "Add Item", "Enter item name:")
+        if ok:
+            price, ok = QInputDialog.getDouble(self, "Add Item", "Enter price:")
+            if ok:
+                self.menu_items.append((item_name, price))
+                self.load_menu_items()
+
+    def update_item(self):
+        selected_row = self.menu_table.currentRow()
+        if selected_row != -1:
+            item_name, ok = QInputDialog.getText(self, "Update Item", "Enter new item name:")
+            if ok:
+                price, ok = QInputDialog.getDouble(self, "Update Item", "Enter new price:")
+                if ok:
+                    self.menu_items[selected_row] = (item_name, price)
+                    self.load_menu_items()
+
+    def delete_item(self):
+        selected_row = self.menu_table.currentRow()
+        if selected_row != -1:
+            del self.menu_items[selected_row]
+            self.load_menu_items()
+
+    def load_menu_items(self):
+        self.menu_table.setRowCount(0)
+        for row, item in enumerate(self.menu_items):
+            self.menu_table.insertRow(row)
+            self.menu_table.setItem(row, 0, QTableWidgetItem(item[0]))
+            self.menu_table.setItem(row, 1, QTableWidgetItem(str(item[1])))
+
+class CustomerForm(QWidget):
+    def __init__(self, customers):
+        super().__init__()
+        self.setWindowTitle("Customer Form")
+        self.setGeometry(100, 100, 400, 300)
+
+        self.customers = customers
+
+        self.layout = QVBoxLayout(self)
+
+        self.customer_label = QLabel("Customers:")
+        self.layout.addWidget(self.customer_label)
+
+        self.customer_table = QTableWidget()
+        self.customer_table.setColumnCount(2)
+        self.customer_table.setHorizontalHeaderLabels(["Name", "Email"])
+        self.layout.addWidget(self.customer_table)
+
+        self.add_button = QPushButton("Add Customer")
+        self.layout.addWidget(self.add_button)
+        self.add_button.clicked.connect(self.add_customer)
+
+        self.update_button = QPushButton("Update Customer")
+        self.layout.addWidget(self.update_button)
+        self.update_button.clicked.connect(self.update_customer)
+
+        self.delete_button = QPushButton("Delete Customer")
+        self.layout.addWidget(self.delete_button)
+        self.delete_button.clicked.connect(self.delete_customer)
+
+        self.load_customers()
+
+    def add_customer(self):
+        customer_name, ok = QInputDialog.getText(self, "Add Customer", "Enter customer name:")
+        if ok:
+            customer_email, ok = QInputDialog.getText(self, "Add Customer", "Enter customer email:")
+            if ok:
+                self.customers.append((customer_name, customer_email))
+                self.load_customers()
+
+    def update_customer(self):
+        selected_row = self.customer_table.currentRow()
+        if selected_row != -1:
+            customer_name, ok = QInputDialog.getText(self, "Update Customer", "Enter new customer name:")
+            if ok:
+                customer_email, ok = QInputDialog.getText(self, "Update Customer", "Enter new customer email:")
+                if ok:
+                    self.customers[selected_row] = (customer_name, customer_email)
+                    self.load_customers()
+
+    def delete_customer(self):
+        selected_row = self.customer_table.currentRow()
+        if selected_row != -1:
+            del self.customers[selected_row]
+            self.load_customers()
+
+    def load_customers(self):
+        self.customer_table.setRowCount(0)
+        for row, customer in enumerate(self.customers):
+            self.customer_table.insertRow(row)
+            self.customer_table.setItem(row, 0, QTableWidgetItem(customer[0]))
+            self.customer_table.setItem(row, 1, QTableWidgetItem(customer[1]))
+
+class OrderForm(QWidget):
+    def __init__(self, orders):
+        super().__init__()
+        self.setWindowTitle("Order Form")
+        self.setGeometry(100, 100, 400, 300)
+
+        self.orders = orders
+
+        self.layout = QVBoxLayout(self)
+
+        self.order_label = QLabel("Orders:")
+        self.layout.addWidget(self.order_label)
+
+        self.order_table = QTableWidget()
+        self.order_table.setColumnCount(4)
+        self.order_table.setHorizontalHeaderLabels(["Order ID", "Customer", "Item", "Price"])
+        self.layout.addWidget(self.order_table)
+
+        self.add_button = QPushButton("Add Order")
+        self.layout.addWidget(self.add_button)
+        self.add_button.clicked.connect(self.add_order)
+
+        self.update_button = QPushButton("Update Order")
+        self.layout.addWidget(self.update_button)
+        self.update_button.clicked.connect(self.update_order)
+
+        self.delete_button = QPushButton("Delete Order")
+        self.layout.addWidget(self.delete_button)
+        self.delete_button.clicked.connect(self.delete_order)
+
+        self.load_orders()
+
+    def add_order(self):
+        order_id, ok = QInputDialog.getText(self, "Add Order", "Enter order ID:")
+        if ok:
+            customer_name, ok = QInputDialog.getText(self, "Add Order", "Enter customer name:")
+            if ok:
+                item, ok = QInputDialog.getText(self, "Add Order", "Enter item:")
+                if ok:
+                    price, ok = QInputDialog.getDouble(self, "Add Order", "Enter price:")
+                    if ok:
+                        self.orders.append((order_id, customer_name, item, price))
+                        self.load_orders()
+
+    def update_order(self):
+        selected_row = self.order_table.currentRow()
+        if selected_row != -1:
+            order_id, ok = QInputDialog.getText(self, "Update Order", "Enter new order ID:")
+            if ok:
+                customer_name, ok = QInputDialog.getText(self, "Update Order", "Enter new customer name:")
+                if ok:
+                    item, ok = QInputDialog.getText(self, "Update Order", "Enter new item:")
+                    if ok:
+                        price, ok = QInputDialog.getDouble(self, "Update Order", "Enter new price:")
+                        if ok:
+                            self.orders[selected_row] = (order_id, customer_name, item, price)
+                            self.load_orders()
+
+    def delete_order(self):
+        selected_row = self.order_table.currentRow()
+        if selected_row != -1:
+            del self.orders[selected_row]
+            self.load_orders()
+
+    def load_orders(self):
+        self.order_table.setRowCount(0)
+        for row, order in enumerate(self.orders):
+            self.order_table.insertRow(row)
+            self.order_table.setItem(row, 0, QTableWidgetItem(order[0]))
+            self.order_table.setItem(row, 1, QTableWidgetItem(order[1]))
+            self.order_table.setItem(row, 2, QTableWidgetItem(order[2]))
+            self.order_table.setItem(row, 3, QTableWidgetItem(str(order[3])))
+
+class EmployeeForm(QWidget):
+    def __init__(self, employees):
+        super().__init__()
+        self.setWindowTitle("Employee Form")
+        self.setGeometry(100, 100, 400, 300)
+
+        self.employees = employees
+
+        self.layout = QVBoxLayout(self)
+
+        self.employee_label = QLabel("Employees:")
+        self.layout.addWidget(self.employee_label)
+
+        self.employee_table = QTableWidget()
+        self.employee_table.setColumnCount(4)
+        self.employee_table.setHorizontalHeaderLabels(["ID", "First Name", "Last Name", "Position"])
+        self.layout.addWidget(self.employee_table)
+
+        self.add_button = QPushButton("Add Employee")
+        self.layout.addWidget(self.add_button)
+        self.add_button.clicked.connect(self.add_employee)
+
+        self.update_button = QPushButton("Update Employee")
+        self.layout.addWidget(self.update_button)
+        self.update_button.clicked.connect(self.update_employee)
+
+        self.delete_button = QPushButton("Delete Employee")
+        self.layout.addWidget(self.delete_button)
+        self.delete_button.clicked.connect(self.delete_employee)
+
+        self.load_employees()
+
+    def load_employees(self):
+        self.employee_table.setRowCount(0)
+        for row, employee in enumerate(self.employees):
+            self.employee_table.insertRow(row)
+            self.employee_table.setItem(row, 0, QTableWidgetItem(str(employee[0])))
+            self.employee_table.setItem(row, 1, QTableWidgetItem(employee[1]))
+            self.employee_table.setItem(row, 2, QTableWidgetItem(employee[2]))
+            self.employee_table.setItem(row, 3, QTableWidgetItem(employee[3]))
+
+    def add_employee(self):
+        first_name, ok = QInputDialog.getText(self, "Add Employee", "Enter first name:")
+        if ok:
+            last_name, ok = QInputDialog.getText(self, "Add Employee", "Enter last name:")
+            if ok:
+                position, ok = QInputDialog.getText(self, "Add Employee", "Enter position:")
+                if ok:
+                    self.employees.append((len(self.employees) + 1, first_name, last_name, position))
+                    self.load_employees()
+
+    def update_employee(self):
+        selected_row = self.employee_table.currentRow()
+        if selected_row != -1:
+            employee_id = int(self.employee_table.item(selected_row, 0).text())
+            first_name, ok = QInputDialog.getText(self, "Update Employee", "Enter new first name:")
+            if ok:
+                last_name, ok = QInputDialog.getText(self, "Update Employee", "Enter new last name:")
+                if ok:
+                    position, ok = QInputDialog.getText(self, "Update Employee", "Enter new position:")
+                    if ok:
+                        for i, employee in enumerate(self.employees):
+                            if employee[0] == employee_id:
+                                self.employees[i] = (employee_id, first_name, last_name, position)
+                                self.load_employees()
+                                break
+
+    def delete_employee(self):
+        selected_row = self.employee_table.currentRow()
+        if selected_row != -1:
+            employee_id = int(self.employee_table.item(selected_row, 0).text())
+            for i, employee in enumerate(self.employees):
+                if employee[0] == employee_id:
+                    del self.employees[i]
+                    self.load_employees()
+                    break
+            
+app = QApplication([])
+
+orders = []
+employees = []
+
+window = QWidget()
+
+customer_form = CustomerForm(orders)
+order_form = OrderForm(orders)
+employee_form = EmployeeForm(employees)
+
+splitter = QSplitter(Qt.Orientation.Horizontal)
+splitter.addWidget(customer_form)
+splitter.addWidget(order_form)
+splitter.addWidget(employee_form)
+
+layout = QVBoxLayout(window)
+layout.addWidget(splitter)
+
+window.show()
+
+app.exec()
+    </code></pre>
+  </div>
+</body>
+</html>

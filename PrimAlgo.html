@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Source Code</title>
+<style>
+  body {
+    background-color: black;
+    margin: 0;
+    padding: 20px; /* Add padding for better readability */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white; /* Adding white color for better readability */
+    font-family: Arial, sans-serif; /* Adding a font family for better readability */
+    font-size: 18px; /* Larger font size */
+    line-height: 1.6; /* Improved line height for readability */
+  }
+  pre {
+    white-space: pre-wrap; /* Preserve white spaces */
+    font-size: 16px; /* Adjusting code font size */
+    background-color: #333; /* Adding a dark background for code block */
+    padding: 20px; /* Adding padding for code block */
+    border-radius: 8px; /* Rounded corners for code block */
+    overflow-x: auto; /* Allow horizontal scrolling if needed */
+  }
+</style>
+</head>
+<body>
+  <div style="max-width: 800px;">
+    <h1>Prim's Algorithm</h1>
+    <pre><code>
+import heapq
+
+def prim(graph):
+    mst = []  # Create an empty set to store the MST
+    visited = set()  # Keeps track of visited nodes
+    start_node = next(iter(graph))  # Arbitrarily pick a starting node
+    min_heap = [(0, start_node, None)]  # Priority queue (heap) initialized with (weight, node, parent)
+
+    while min_heap:
+        weight, node, parent = heapq.heappop(min_heap)  # Extract the edge with the smallest weight
+
+        if node not in visited:  # If the node is not already visited
+            visited.add(node)  # Mark node as visited
+
+            if parent is not None:  # If it's not the starting node, add edge to MST
+                mst.append((parent, node, weight))
+
+            for neighbor, edge_weight in graph[node]:  # Iterate through adjacent nodes
+                if neighbor not in visited:  # Add only unvisited neighbors
+                    heapq.heappush(min_heap, (edge_weight, neighbor, node))  # Push edge to priority queue
+
+    return mst  # Return the MST as a list of edges
+
+def create_graph():
+    graph = {}
+    num_edges = int(input("Enter the number of edges: "))
+    
+    for _ in range(num_edges):
+        u, v, w = input("Enter edge (format: u v w): ").split()
+        w = int(w)
+        if u not in graph:
+            graph[u] = []
+        if v not in graph:
+            graph[v] = []
+        graph[u].append((v, w))
+        graph[v].append((u, w))
+    
+    return graph
+
+if __name__ == "__main__":
+    graph = create_graph()
+    mst = prim(graph)
+    print("Minimum Spanning Tree:", mst)
+    </code></pre>
+  </div>
+</body>
+</html>

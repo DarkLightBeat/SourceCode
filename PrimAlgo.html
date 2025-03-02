@@ -33,47 +33,71 @@
     <pre><code>
 import heapq
 
-def prim(graph):
-    mst = []  # Create an empty set to store the MST
-    visited = set()  # Keeps track of visited nodes
-    start_node = next(iter(graph))  # Arbitrarily pick a starting node
-    min_heap = [(0, start_node, None)]  # Priority queue (heap) initialized with (weight, node, parent)
+def prim(graph, start=0):
+    """Compute the Minimum Spanning Tree (MST) using Prim's Algorithm.
 
-    while min_heap:
-        weight, node, parent = heapq.heappop(min_heap)  # Extract the edge with the smallest weight
+    Args:
+        graph: A dictionary where keys are nodes and values are lists of (weight, neighbor) tuples.
+        start: The starting vertex.
 
-        if node not in visited:  # If the node is not already visited
-            visited.add(node)  # Mark node as visited
+    Returns:
+        A list of edges (u, v, weight) forming the MST.
+    """
+    mst_edges = []  # Stores the MST edges
+    visited = set()  # Tracks visited nodes
+    min_heap = []  # Min-heap to get the minimum-weight edge
 
-            if parent is not None:  # If it's not the starting node, add edge to MST
-                mst.append((parent, node, weight))
+    # Start from the given vertex
+    visited.add(start)
+    for weight, neighbor in graph[start]:
+        heapq.heappush(min_heap, (weight, start, neighbor))
 
-            for neighbor, edge_weight in graph[node]:  # Iterate through adjacent nodes
-                if neighbor not in visited:  # Add only unvisited neighbors
-                    heapq.heappush(min_heap, (edge_weight, neighbor, node))  # Push edge to priority queue
+    while len(visited) < len(graph):
+        weight, u, v = heapq.heappop(min_heap)  # Get the smallest edge
 
-    return mst  # Return the MST as a list of edges
+        if v in visited:
+            continue  # Ignore if the vertex is already in the MST
 
-def create_graph():
-    graph = {}
-    num_edges = int(input("Enter the number of edges: "))
-    
-    for _ in range(num_edges):
-        u, v, w = input("Enter edge (format: u v w): ").split()
-        w = int(w)
-        if u not in graph:
-            graph[u] = []
-        if v not in graph:
-            graph[v] = []
-        graph[u].append((v, w))
-        graph[v].append((u, w))
-    
-    return graph
+        # Add edge to MST
+        mst_edges.append((u, v, weight))
+        visited.add(v)
 
-if __name__ == "__main__":
-    graph = create_graph()
-    mst = prim(graph)
-    print("Minimum Spanning Tree:", mst)
+        # Push new edges of v into the heap
+        for w, neighbor in graph[v]:
+            if neighbor not in visited:
+                heapq.heappush(min_heap, (w, v, neighbor))
+
+    return mst_edges
+
+# Take user input for the graph
+graph = {}
+
+# Input: Number of vertices and edges
+num_vertices = int(input("Enter the number of vertices: "))
+num_edges = int(input("Enter the number of edges: "))
+
+# Initialize graph with empty lists
+for i in range(num_vertices):
+    graph[i] = []
+
+# Input edges
+print("Enter edges in the format: vertex1 vertex2 weight")
+for _ in range(num_edges):
+    u, v, w = map(int, input().split())
+    graph[u].append((w, v))
+    graph[v].append((w, u))  # Since the graph is undirected
+
+# Input the starting vertex
+start_vertex = int(input("Enter the starting vertex: "))
+
+# Run Prim's Algorithm
+mst = prim(graph, start_vertex)
+
+# Output the MST
+print("\nMinimum Spanning Tree edges:")
+for u, v, weight in mst:
+    print(f"{u} -- {v} [Weight: {weight}]")
+
     </code></pre>
   </div>
 </body>

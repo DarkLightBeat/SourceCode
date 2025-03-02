@@ -31,53 +31,20 @@
   <div style="max-width: 800px;">
     <h1>Prim's Algorithm PseudoCode</h1>
     <pre><code>
-### Pseudocode for Prim's Algorithm
+      
+ALGORITHM  Prim(G)  
+//Prim’s algorithm for constructing a minimum spanning tree  
+//Input: A weighted connected graph G = (V, E)  
+//Output: ET, the set of edges composing a minimum spanning tree of G  
+VT ← {v0} //the set of tree vertices can be initialized with any vertex  
+ET ← ∅  
+for i ← 1 to |V| - 1 do  
+    find a minimum-weight edge e* = (v*, u*) among all the edges (v, u)  
+    such that v is in VT and u is in V − VT  
+    VT ← VT ∪ {u*}  
+    ET ← ET ∪ {e*}  
+return ET  
 
-1. Initialize:
-   - Create an empty set `MST` to store the edges of the Minimum Spanning Tree.
-   - Create a priority queue `minHeap` to store edges with their weights.
-   - Create a set `visited` to keep track of visited vertices.
-   - Choose an arbitrary starting vertex `startNode`.
-
-2. Add the starting vertex to the priority queue:
-   - Insert `(0, startNode, None)` into `minHeap` (weight, vertex, parent).
-
-3. While the priority queue is not empty:
-   - Extract the edge with the smallest weight from `minHeap`.
-   - If the extracted vertex is not in `visited`:
-     - Add the vertex to `visited`.
-     - If the vertex has a parent (i.e., it's not the starting vertex), add the edge to `MST`.
-     - For each adjacent vertex of the extracted vertex:
-       - If the adjacent vertex is not in `visited`, add the edge to `minHeap`.
-
-4. Return `MST`.
-
-### Detailed Pseudocode
-
-```
-function Prim(graph):
-    MST = []  # List to store the edges of the Minimum Spanning Tree
-    minHeap = PriorityQueue()  # Priority queue to store edges with their weights
-    visited = set()  # Set to keep track of visited vertices
-    startNode = any vertex from graph  # Choose an arbitrary starting vertex
-
-    minHeap.insert((0, startNode, None))  # Insert the starting vertex with weight 0
-
-    while minHeap is not empty:
-        weight, node, parent = minHeap.extractMin()  # Extract the edge with the smallest weight
-
-        if node not in visited:
-            visited.add(node)  # Mark the vertex as visited
-
-            if parent is not None:
-                MST.append((parent, node, weight))  # Add the edge to MST
-
-            for neighbor, edgeWeight in graph[node]:  # Iterate through adjacent vertices
-                if neighbor not in visited:
-                    minHeap.insert((edgeWeight, neighbor, node))  # Add the edge to the priority queue
-
-    return MST  # Return the Minimum Spanning Tree
-```
     </code></pre>
 </div>
 </body>

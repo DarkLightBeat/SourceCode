@@ -33,12 +33,12 @@
     <pre><code>
 import heapq
 
-def prim(graph, start=0):
+def prim(graph, start):
     """Compute the Minimum Spanning Tree (MST) using Prim's Algorithm.
 
     Args:
         graph: A dictionary where keys are nodes and values are lists of (weight, neighbor) tuples.
-        start: The starting vertex.
+        start: The starting vertex (character input).
 
     Returns:
         A list of edges (u, v, weight) forming the MST.
@@ -76,19 +76,27 @@ graph = {}
 num_vertices = int(input("Enter the number of vertices: "))
 num_edges = int(input("Enter the number of edges: "))
 
-# Initialize graph with empty lists
-for i in range(num_vertices):
-    graph[i] = []
+# Initialize graph
+vertices = {}  # Map character vertices to unique keys
+print("Enter the vertex names (characters like A, B, C, etc.):")
+for _ in range(num_vertices):
+    char = input().strip()
+    vertices[char] = char  # Store as itself (no need for numeric mapping)
 
 # Input edges
 print("Enter edges in the format: vertex1 vertex2 weight")
 for _ in range(num_edges):
-    u, v, w = map(int, input().split())
+    u, v, w = input().split()
+    w = int(w)  # Convert weight to integer
+    if u not in graph:
+        graph[u] = []
+    if v not in graph:
+        graph[v] = []
     graph[u].append((w, v))
     graph[v].append((w, u))  # Since the graph is undirected
 
 # Input the starting vertex
-start_vertex = int(input("Enter the starting vertex: "))
+start_vertex = input("Enter the starting vertex: ").strip()
 
 # Run Prim's Algorithm
 mst = prim(graph, start_vertex)

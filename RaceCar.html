@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Source Code</title>
+<style>
+  body {
+    background-color: black;
+    margin: 0;
+    padding: 20px; /* Add padding for better readability */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white; /* Adding white color for better readability */
+    font-family: Arial, sans-serif; /* Adding a font family for better readability */
+    font-size: 18px; /* Larger font size */
+    line-height: 1.6; /* Improved line height for readability */
+  }
+  pre {
+    white-space: pre-wrap; /* Preserve white spaces */
+    font-size: 16px; /* Adjusting code font size */
+    background-color: #333; /* Adding a dark background for code block */
+    padding: 20px; /* Adding padding for code block */
+    border-radius: 8px; /* Rounded corners for code block */
+    overflow-x: auto; /* Allow horizontal scrolling if needed */
+  }
+</style>
+</head>
+<body>
+  <div style="max-width: 800px;">
+    <h1>Race Car PseudoCode</h1>
+    <pre><code>
+ from collections import deque
+
+def racecar(target):
+    queue = deque([(0, 1, 0)])  # (position, speed, steps)
+    visited = set((0, 1))  # Store visited (position, speed)
+
+    while queue:
+        position, speed, steps = queue.popleft()
+
+        # If we reach the target, return the number of steps
+        if position == target:
+            return steps
+
+        # Move forward with 'A' (accelerate)
+        new_position = position + speed
+        new_speed = speed * 2
+        if (new_position, new_speed) not in visited and 0 <= new_position <= 2 * target:
+            queue.append((new_position, new_speed, steps + 1))
+            visited.add((new_position, new_speed))
+
+        # Reverse direction with 'R' (reverse)
+        new_speed = -1 if speed > 0 else 1
+        if (position, new_speed) not in visited:
+            queue.append((position, new_speed, steps + 1))
+            visited.add((position, new_speed))
+
+# **User Input Section**
+try:
+    target = int(input("Enter the target position: "))
+    if target < 0:
+        print("Target position must be a positive number.")
+    else:
+        result = racecar(target)
+        print(f"Minimum steps needed to reach position {target}: {result}")
+except ValueError:
+    print("Invalid input. Please enter a valid number.")
+
+    </code></pre>
+</div>
+</body>
+</html>

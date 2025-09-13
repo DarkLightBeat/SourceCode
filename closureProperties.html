@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Source Code</title>
+<style>
+  body {
+    background-color: black;
+    margin: 0;
+    padding: 20px; /* Add padding for better readability */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white; /* Adding white color for better readability */
+    font-family: Arial, sans-serif; /* Adding a font family for better readability */
+    font-size: 18px; /* Larger font size */
+    line-height: 1.6; /* Improved line height for readability */
+  }
+  pre {
+    white-space: pre-wrap; /* Preserve white spaces */
+    font-size: 16px; /* Adjusting code font size */
+    background-color: #333; /* Adding a dark background for code block */
+    padding: 20px; /* Adding padding for code block */
+    border-radius: 8px; /* Rounded corners for code block */
+    overflow-x: auto; /* Allow horizontal scrolling if needed */
+  }
+</style>
+</head>
+<body>
+  <div style="max-width: 800px;">
+    <h1>Kleene Star Source Code</h1>
+    <pre><code>
+
+def kleene_star_automata(A):
+    states = set(A['states']) | {'S*'}
+    alphabet = set(A['alphabet'])
+    start_state = 'S*'
+    accept_states = set(A['accept_states']) | {'S*'}
+    transitions = dict(A['transitions'])
+    # ε-transitions simulated by allowing S* to go to A's start on any symbol
+    for symbol in alphabet:
+        transitions[('S*', symbol)] = A['transitions'].get((A['start_state'], symbol), A['start_state'])
+    # From accept states, go back to start
+    for acc in A['accept_states']:
+        for symbol in alphabet:
+            transitions[(acc, symbol)] = A['transitions'].get((A['start_state'], symbol), A['start_state'])
+    return {
+        'states': states,
+        'alphabet': alphabet,
+        'start_state': start_state,
+        'accept_states': accept_states,
+        'transitions': transitions
+    }
+
+def print_automaton(automaton):
+    print("States:", automaton['states'])
+    print("Alphabet:", automaton['alphabet'])
+    print("Start State:", automaton['start_state'])
+    print("Accept States:", automaton['accept_states'])
+    print("Transitions:")
+    for (state, symbol), next_state in automaton['transitions'].items():
+        print(f"  δ({state}, '{symbol}') -> {next_state}")
+
+print("Enter states (comma separated):")
+states = set(input().strip().split(','))
+print("Enter alphabet (comma separated):")
+alphabet = set(input().strip().split(','))
+print("Enter start state:")
+start_state = input().strip()
+print("Enter accept states (comma separated):")
+accept_states = set(input().strip().split(','))
+print("Enter transitions (format: from_state, symbol, to_state) one per line. Enter empty line to finish:")
+transitions = {}
+while True:
+    line = input().strip()
+    if not line:
+        break
+    parts = line.split(',')
+    if len(parts) == 3:
+        from_state, symbol, to_state = parts
+        transitions[(from_state.strip(), symbol.strip())] = to_state.strip()
+        
+A = {
+    "states": states,
+    "alphabet": alphabet,
+    "start_state": start_state,
+    "accept_states": accept_states,
+    "transitions": transitions
+}
+
+result = kleene_star_automata(A)
+print("\nKleene Star Automaton:")
+print_automaton(result)
+
+    </code></pre>
+  </div>
+</body>
+</html>

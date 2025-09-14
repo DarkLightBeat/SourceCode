@@ -32,19 +32,36 @@
     <h1>Kleene Star Source Code</h1>
     <pre><code>
 
-def kleene_star_automata(A):
+# DFA Kleene star 
+def kleene_star_dfa(A):
     states = set(A['states']) | {'S*'}
     alphabet = set(A['alphabet'])
     start_state = 'S*'
     accept_states = set(A['accept_states']) | {'S*'}
     transitions = dict(A['transitions'])
-    # ε-transitions simulated by allowing S* to go to A's start on any symbol
     for symbol in alphabet:
         transitions[('S*', symbol)] = A['transitions'].get((A['start_state'], symbol), A['start_state'])
-    # From accept states, go back to start
     for acc in A['accept_states']:
         for symbol in alphabet:
             transitions[(acc, symbol)] = A['transitions'].get((A['start_state'], symbol), A['start_state'])
+    return {
+        'states': states,
+        'alphabet': alphabet,
+        'start_state': start_state,
+        'accept_states': accept_states,
+        'transitions': transitions
+    }
+
+# NFA Kleene star
+def kleene_star_nfa(A):
+    states = set(A['states']) | {'S*'}
+    alphabet = set(A['alphabet'])
+    start_state = 'S*'
+    accept_states = set(A['accept_states']) | {'S*'}
+    transitions = dict(A['transitions'])
+    transitions[('S*', '')] = {A['start_state']}
+    for acc in A['accept_states']:
+        transitions[(acc, '')] = {A['start_state']}
     return {
         'states': states,
         'alphabet': alphabet,
@@ -60,7 +77,10 @@ def print_automaton(automaton):
     print("Accept States:", automaton['accept_states'])
     print("Transitions:")
     for (state, symbol), next_state in automaton['transitions'].items():
-        print(f"  δ({state}, '{symbol}') -> {next_state}")
+        if symbol == '':
+            print(f"  δ({state}, ε) -> {next_state}")
+        else:
+            print(f"  δ({state}, '{symbol}') -> {next_state}")
 
 print("Enter states (comma separated):")
 states = set(input().strip().split(','))
@@ -70,17 +90,27 @@ print("Enter start state:")
 start_state = input().strip()
 print("Enter accept states (comma separated):")
 accept_states = set(input().strip().split(','))
-print("Enter transitions (format: from_state, symbol, to_state) one per line. Enter empty line to finish:")
+print("For NFA, use '' (empty string) for epsilon transitions")
+print("Enter transitions (format: from_state, symbol, to_state) one per line:")
 transitions = {}
 while True:
     line = input().strip()
     if not line:
         break
     parts = line.split(',')
-    if len(parts) == 3:
-        from_state, symbol, to_state = parts
-        transitions[(from_state.strip(), symbol.strip())] = to_state.strip()
-        
+    if len(parts) != 3:
+        print("Invalid transition format. Please use: from_state,symbol,to_state")
+        continue
+    from_state, symbol, to_state = parts
+    key = (from_state.strip(), symbol.strip())
+    if key in transitions:
+        if isinstance(transitions[key], set):
+            transitions[key].add(to_state.strip())
+        else:
+            transitions[key] = {transitions[key], to_state.strip()}
+    else:
+        transitions[key] = to_state.strip()
+
 A = {
     "states": states,
     "alphabet": alphabet,
@@ -89,11 +119,17 @@ A = {
     "transitions": transitions
 }
 
-result = kleene_star_automata(A)
-print("\nKleene Star Automaton:")
-print_automaton(result)
+print("\nDFA Kleene Star Automaton:")
+dfa_result = kleene_star_dfa(A)
+print_automaton(dfa_result)
+
+print("\nNFA Kleene Star Automaton:")
+nfa_result = kleene_star_nfa(A)
+print_automaton(nfa_result)
+
 
     </code></pre>
   </div>
 </body>
+
 </html>
